@@ -17,19 +17,30 @@ public class Server {
             System.out.printf("SUCCESS : Server bound and listening at %s\n",
                     serverSocket.getLocalSocketAddress().toString().split("/")[1]);
 
-            // Accept incoming connections
-            Socket clientSocket = serverSocket.accept();
-            System.out.printf("\tACCEPTED connection from client<%s>\n",
-                    clientSocket.getRemoteSocketAddress().toString().split("/")[1]);
+            DataInputStream inputStream = null;
+            DataOutputStream outputStream = null;
+            while (true) {
+                try {
+                    // Accept incoming connections
+                    Socket clientSocket = serverSocket.accept();
+                    System.out.printf("\tACCEPTED connection from client<%s>\n",
+                            clientSocket.getRemoteSocketAddress().toString().split("/")[1]);
 
-            // Access underlying socket streams
-            DataInputStream inputStream = new DataInputStream(clientSocket.getInputStream());
-            DataOutputStream outputStream = new DataOutputStream(clientSocket.getOutputStream());
+                    inputStream = new DataInputStream(clientSocket.getInputStream());
+                    outputStream = new DataOutputStream(clientSocket.getOutputStream());
+                    // Access underlying socket streams
 
-            outputStream.writeUTF("Hello there!");
-            outputStream.flush();
-            outputStream.close();
-            inputStream.close();
+                    outputStream.writeUTF("Hello there!");
+                    outputStream.flush();
+                    outputStream.close();
+                    inputStream.close();
+                    clientSocket.close();
+                } catch (Exception e) {
+                    // Terminates loop
+                    break;
+                }
+
+            }
             serverSocket.close();
         } catch (IOException ioException) {
             ioException.printStackTrace();
