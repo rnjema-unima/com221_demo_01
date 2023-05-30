@@ -29,9 +29,19 @@ public class Server {
                     inputStream = new DataInputStream(clientSocket.getInputStream());
                     outputStream = new DataOutputStream(clientSocket.getOutputStream());
                     // Access underlying socket streams
-
-                    outputStream.writeUTF("Hello there!");
-                    outputStream.flush();
+                    String message = "";
+                    while (true) {
+                        message = inputStream.readUTF();
+                        System.out.printf("\tClient says %s\n",
+                                message);
+                        if (message.equalsIgnoreCase("close")) {
+                            break;
+                        }
+                        outputStream.writeUTF(message);
+                        outputStream.flush();
+                    }
+                    // outputStream.writeUTF("Hello there!");
+                    // outputStream.flush();
                     outputStream.close();
                     inputStream.close();
                     clientSocket.close();
